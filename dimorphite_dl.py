@@ -846,7 +846,7 @@ class ProtSubstructFuncs:
                             # Because sites must be unique.
                             protonation_sites.append(new_site)
 
-                    ProtectUnprotectFuncs.protect_molecule(mol_used_to_idx_sites, match)
+                    #ProtectUnprotectFuncs.protect_molecule(mol_used_to_idx_sites, match)
 
         return protonation_sites, mol_used_to_idx_sites
 
