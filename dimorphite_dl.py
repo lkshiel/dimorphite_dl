@@ -220,6 +220,12 @@ class ArgParseFuncs:
         parser.add_argument(
             "--test", action="store_true", help="run unit tests (for debugging)"
         )
+        parser.add_argument(
+            "--molgpka_idx",
+            metavar="IDX",
+            type=list,
+            help="atom index for pka values from MolGpKa",
+        )
 
         return parser
 
@@ -619,7 +625,7 @@ class Protonate(object):
         (
             sites,
             mol_used_to_idx_sites,
-        ) = ProtSubstructFuncs.get_prot_sites_and_target_states(orig_smi, self.subs)
+        ) = ProtSubstructFuncs.get_prot_sites_and_target_states(orig_smi, self.subs, self.args["molgpka_idx"])
 
         new_mols = [mol_used_to_idx_sites]
         if len(sites) > 0:
@@ -792,7 +798,7 @@ class ProtSubstructFuncs:
         return protonation_state
 
     @staticmethod
-    def get_prot_sites_and_target_states(smi, subs):
+    def get_prot_sites_and_target_states(smi, subs, idx):
         """For a single molecule, find all possible matches in the protonation
         R-group list, subs. Items that are higher on the list will be matched
         first, to the exclusion of later items.
@@ -841,10 +847,10 @@ class ProtSubstructFuncs:
                         proton = int(site[0])
                         category = site[1]
                         new_site = (match[proton], category, item["name"])
-
-                        if not new_site in protonation_sites:
-                            # Because sites must be unique.
-                            protonation_sites.append(new_site)
+                        if new_site[0] in idx:
+                            if not new_site in protonation_sites:
+                                # Because sites must be unique.
+                                protonation_sites.append(new_site)
 
                     #ProtectUnprotectFuncs.protect_molecule(mol_used_to_idx_sites, match)
 
